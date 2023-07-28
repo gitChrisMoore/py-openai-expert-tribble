@@ -22,6 +22,9 @@ producer = KafkaProducer(
 app = Flask(__name__)
 
 
+#
+
+
 @app.route("/")
 def hello_world():
     future = producer.send(TOPIC_NAME, b"Hello Upstash!")
