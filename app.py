@@ -11,13 +11,13 @@ UPSTASH_KAFKA_PASSWORD = "72784a0f2d7647e58185136ceb50a30b"
 TOPIC_NAME = "prod-strategy-market_size"
 
 
-producer = KafkaProducer(
-    bootstrap_servers=BOOTSTRAP_ENDPOINT,
-    sasl_mechanism="SCRAM-SHA-512",
-    security_protocol="SASL_SSL",
-    sasl_plain_username=UPSTASH_KAFKA_USERNAME,
-    sasl_plain_password=UPSTASH_KAFKA_PASSWORD,
-)
+# producer = KafkaProducer(
+#     bootstrap_servers=BOOTSTRAP_ENDPOINT,
+#     sasl_mechanism="SCRAM-SHA-512",
+#     security_protocol="SASL_SSL",
+#     sasl_plain_username=UPSTASH_KAFKA_USERNAME,
+#     sasl_plain_password=UPSTASH_KAFKA_PASSWORD,
+# )
 
 app = Flask(__name__)
 
@@ -27,9 +27,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    future = producer.send(TOPIC_NAME, b"Hello Upstash!")
-    record_metadata = future.get(timeout=10)
-    print(record_metadata)
+    # future = producer.send(TOPIC_NAME, b"Hello Upstash!")
+    # record_metadata = future.get(timeout=10)
+    # print(record_metadata)
     return "Hello, World"
 
 
