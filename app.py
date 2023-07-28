@@ -1,6 +1,7 @@
 from flask import Flask
 from kafka import KafkaProducer, KafkaConsumer
 import threading
+import socket
 
 BOOTSTRAP_ENDPOINT = ["up-osprey-6230-us1-kafka.upstash.io:9092"]
 UPSTASH_KAFKA_USERNAME = (
@@ -18,6 +19,25 @@ TOPIC_NAME = "prod-strategy-market_size"
 #     sasl_plain_username=UPSTASH_KAFKA_USERNAME,
 #     sasl_plain_password=UPSTASH_KAFKA_PASSWORD,
 # )
+
+
+def internet(host="8.8.8.8", port=53, timeout=3):
+    """
+    Host: 8.8.8.8 (google-public-dns-a.google.com)
+    OpenPort: 53/tcp
+    Service: domain (DNS/TCP)
+    """
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        # print conntect with host and port successfully
+        print(f"Connected to {host}:{port}")
+        return True
+    except socket.error as ex:
+        print("Socket Error")
+        print(ex)
+        return False
+
 
 app = Flask(__name__)
 
@@ -57,6 +77,8 @@ def run_app():
 
 
 if __name__ == "__main__":
+    internet()
+    internet(host="up-osprey-6230-us1-kafka.upstash.io", port=9092)
     first_thread = threading.Thread(target=run_app)
     second_thread = threading.Thread(target=consume_messages)
     first_thread.start()
