@@ -97,7 +97,8 @@ class BaseBot:
                 # ignore if the consumer_id is the same as the current consumer_id
                 if _payload["consumer_id"] == self.consumer_id:
                     logging.warning(
-                        "Message is from the same consumer_id: %s", _payload
+                        # "Message is from the same consumer_id: %s", _payload
+                        "Message is from the same consumer_id, ignoring"
                     )
                     continue
 

@@ -29,18 +29,6 @@ producer = KafkaProducer(
 )
 
 
-def create_message_dict(
-    role="user", content="What is a good salad company", function_call=""
-):
-    message_dict = {
-        "consumer_id": "random_other",
-        "role": role,
-        "content": content,
-        "function_call": function_call,
-    }
-    return message_dict
-
-
 app = Flask(__name__)
 # CORS(app)
 CORS(
@@ -52,17 +40,7 @@ CORS(
 app.config["ENV"] = "development"
 
 
-@app.route("/")
-def hello_world():
-    # future = producer.send(TOPIC_NAME, b"Hello Upstash!")
-
-    future = producer.send(TOPIC_NAME, value=create_message_dict())
-    record_metadata = future.get(timeout=10)
-    # print(record_metadata)
-    return "Hello, World"
-
-
-def generate_event_data():
+def get_event_data(topic_name):
     consumer = KafkaConsumer(
         bootstrap_servers=BOOTSTRAP_ENDPOINT,
         sasl_mechanism="SCRAM-SHA-512",
@@ -71,30 +49,29 @@ def generate_event_data():
         sasl_plain_password=UPSTASH_KAFKA_PASSWORD,
         value_deserializer=lambda m: json.loads(m.decode("utf-8")),
     )
-    consumer.subscribe([TOPIC_NAME])
-
-    for message in consumer:
-        print("new message", message.value)
-        # respond to web listner
-        yield f"data: {message.value}\n\n"
-
-
-# /events endpoint that publishes messages to a react endpoint
-@app.route("/api/events")
-def events():
-    response = Response(generate_event_data(), content_type="text/event-stream")
-    # response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    # add try catch block
+    try:
+        print("subscribing to topic", topic_name)
+        consumer.subscribe([topic_name])
+        for message in consumer:
+            print("new message recieved")
+            # respond to web listner
+            yield f"data: {message.value}\n\n"
+    except Exception as e:
+        print("error", e)
+    finally:
+        consumer.close()
 
 
-# api/submit_events endpoint that publishes messages to a kafka producer
-@app.route("/api/submit_events", methods=["POST"])
-def submit_events():
-    print("submit_events")
+@app.route("/api/events/strategy/market_obsticle-general", methods=["POST"])
+def submit_events_market_obsticle():
     data = request.json
-    future = producer.send(
-        TOPIC_NAME, value=create_message_dict(content=data["content"])
-    )
+    message = {
+        "consumer_id": "front_end",
+        "role": "user",
+        "content": data["content"],
+    }
+    producer.send("strategy-market_obsticle-general", value=message)
     # Return response to client
     return Response(
         json.dumps({"success": True, "message": "Message sent successfully"}),
@@ -103,10 +80,14 @@ def submit_events():
     )
 
 
-# catch all route
-@app.route("/<path:path>")
-def catch_all(path):
-    return "You want path: %s" % path
+@app.route("/api/events/strategy/market_obsticle-general/subscribe")
+def subscribe_events_market_obsticle():
+    response = Response(
+        get_event_data("strategy-market_obsticle-general"),
+        content_type="text/event-stream",
+    )
+    # response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 def run_app():
@@ -121,8 +102,8 @@ if __name__ == "__main__":
 
     first_thread = threading.Thread(target=run_app)
     second_thread = threading.Thread(target=run_generic_bot)
-    third_thread = threading.Thread(target=run_obstacle_bot)
+    # third_thread = threading.Thread(target=run_obstacle_bot)
     first_thread.start()
     second_thread.start()
     time.sleep(3)
-    third_thread.start()
+    # third_thread.start()
