@@ -3,25 +3,21 @@ from bots.base_botB import BaseBotB
 from open_ai.openai_connection import send_openai_functions
 
 
-def handle_response_custom(response):
+def handle_response_custom(openai_response):
     """Function that handles the response from OpenAI"""
-
-    print("TTTTTTTTTTT TTTTT TTTT TTT ")
-    message = response["choices"][0]["message"]
     try:
-        message_json_dumps = json.dumps(message)
-        function_call = json.loads(message_json_dumps)
-        arguments = function_call["function_call"]["arguments"]
-        arguments_json = json.loads(arguments)
-        events = arguments_json["trends"]
-        print("handle_response_custom: success, trend_bot")
-        return events
+        arguments_raw = openai_response["choices"][0]["message"]["function_call"][
+            "arguments"
+        ]
+        arguments = json.loads(arguments_raw)
+        print("handle_response_custom: success - parsed openai_response")
+        res = arguments["trends"]
+        print("handle_response_custom: success - parsed records: ", str(len(res)))
+        return res
     except Exception as error:
-        print("Error in handle_response_custom")
+        print("handle_response_custom: error in parsing response")
         print(error)
-
-    # print("handle_response_custom           : ", json.loads(message))
-    return message
+        print("handle_response_custom: ", openai_response)
 
 
 def send_message(new_messages):

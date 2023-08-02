@@ -94,6 +94,7 @@ class BaseBotB:
 
     def is_valid_payload(self, payload):
         """Check if the payload is valid"""
+
         if "consumer_id" not in payload:
             logging.warning("Message does not have a consumer_id: %s", payload)
             return False
@@ -106,6 +107,14 @@ class BaseBotB:
 
         if "role" not in payload:
             logging.warning("Payload is missing a role: %s", payload)
+            return False
+
+        if payload["role"] == "user":
+            logging.info("Payload is a user, ignorring: %s", payload)
+            return False
+
+        if payload["role"] == "system":
+            logging.info("Payload is a system, ignorring: %s", payload)
             return False
 
         if "content" not in payload:
