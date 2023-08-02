@@ -10,12 +10,11 @@ BOOTSTRAP_ENDPOINT = ["up-osprey-6230-us1-kafka.upstash.io:9092"]
 UPSTASH_KAFKA_USERNAME = (
     "dXAtb3NwcmV5LTYyMzAkV7cVY7Mr0DNHEu63FYKy6PM4oFFHUhEhy9WDO_FOYmc"
 )
-
 UPSTASH_KAFKA_PASSWORD = "72784a0f2d7647e58185136ceb50a30b"
 TOPIC_NAME = "prod-strategy-market_size"
 
 
-class BaseBot:
+class BaseBotB:
     """Base Bot Class
 
     This class consumes messages from a Kafka topic, sends the message to the
@@ -72,6 +71,49 @@ class BaseBot:
             logging.error("Error parsing JSON payload: %s, payload: %s", error, payload)
             return None
 
+    def parse_openai_res(self, openia_res):
+        """Parse the OpenAI response"""
+        messages = []
+        for i in openia_res:
+            messages.append(
+                {
+                    "role": "assistant",
+                    "title": i["title"],
+                    "implication": i["implication"],
+                }
+            )
+        return messages
+
+    def send_messages(self, messages):
+        """Send messages to the Kafka topic"""
+        for message in messages:
+            self.producer.send(self.pub_topic_name, message)
+            logging.info(
+                "Sent message to topic: %s, message: %s", self.pub_topic_name, message
+            )
+
+    def is_valid_payload(self, payload):
+        """Check if the payload is valid"""
+        if "consumer_id" not in payload:
+            logging.warning("Message does not have a consumer_id: %s", payload)
+            return False
+
+        if payload["consumer_id"] == self.consumer_id:
+            logging.warning(
+                "Message is from the same consumer_id, ignoring: %s", payload
+            )
+            return False
+
+        if "role" not in payload:
+            logging.warning("Payload is missing a role: %s", payload)
+            return False
+
+        if "content" not in payload:
+            logging.warning("Payload is missing a content: %s", payload)
+            return False
+
+        return True
+
     def run(self):
         """Creates a consumer and subscribes to the specified topic name.
         When messages are received, they are parsed a dictionary and printed.
@@ -88,51 +130,36 @@ class BaseBot:
             # use a generator instead of a list to store the messages in the Kafka topic
             for message in self.consumer:
                 # parse kafka message into dict
-                _payload = self.parse_payload(message.value.decode("utf-8"))
+                kafka_message = self.parse_payload(message.value.decode("utf-8"))
 
-                # ignore if _payload does not have a key of consumer_id
-                if "consumer_id" not in _payload:
-                    logging.warning("Message does not have a consumer_id: %s", _payload)
+                if self.is_valid_payload(kafka_message) is False:
                     continue
 
-                # ignore if the consumer_id is the same as the current consumer_id
-                if _payload["consumer_id"] == self.consumer_id:
-                    logging.warning(
-                        # "Message is from the same consumer_id: %s", _payload
-                        "Message is from the same consumer_id, ignoring"
-                    )
-                    continue
-
-                print(
-                    f"Consumer ID: {self.consumer_id} INFO: Sending message to OpenAI"
+                openai_res = self.send_message(
+                    [
+                        {
+                            "role": kafka_message["role"],
+                            "content": kafka_message["content"],
+                        }
+                    ]
                 )
 
-                if "role" in _payload and "content" in _payload:
-                    open_ai_response = self.send_message(
-                        [{"role": _payload["role"], "content": _payload["content"]}]
-                    )
-                    open_ai_response["consumer_id"] = self.consumer_id
+                if openai_res is None:
+                    logging.warning("openai_res is None")
+                    continue
 
-                    logging.info("OpenAI Response: %s", open_ai_response)
-                    self.producer.send(
-                        self.pub_topic_name,
-                        value=open_ai_response,
-                    )
+                producer_messages = self.parse_openai_res(openai_res)
 
-                    # unsubscribe if the counter is greater than the threshold, else increment the counter
-                    if self.message_counter > self.message_threshold:
-                        print("Unsubscribing from topic: %s", self.sub_topic_name)
-                        self.consumer.unsubscribe()
-                        break
-                    else:
-                        print("Message counter: %s", self.message_counter)
-                        self.message_counter += 1
+                self.send_messages(producer_messages)
 
+                # unsubscribe if the counter is greater than the threshold, else increment the counter
+                if self.message_counter > self.message_threshold:
+                    print("Unsubscribing from topic: %s", self.sub_topic_name)
+                    self.consumer.unsubscribe()
+                    break
                 else:
-                    logging.error(
-                        "Payload is missing either 'role' or 'content' key: %s",
-                        _payload,
-                    )
+                    print("Message counter: %s", self.message_counter)
+                    self.message_counter += 1
 
         except KeyboardInterrupt:
             logging.info("Consumer stopped.")

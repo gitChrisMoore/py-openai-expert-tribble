@@ -6,7 +6,7 @@ def send_message(new_messages):
     messages = [
         {
             "role": "system",
-            "content": "Imagine you are a Advisor for the USER who is a CEO.  Your job is to try and help the CEO refine the market trends that they are talking about.",
+            "content": "Imagine you are a Advisor for the USER who is a CEO.  Your job is to try and help the CEO refine the market trends that they are talking about.  No part of your response should use the quotes charecter.",
         },
     ]
     messages.extend(new_messages)
