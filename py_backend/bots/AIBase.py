@@ -2,7 +2,10 @@ import os
 import json
 from dotenv import load_dotenv
 from kafka import KafkaProducer, KafkaConsumer
-from open_ai.openai_connection import send_openai_messages
+from py_backend.open_ai.openai_connection import (
+    send_openai_messages,
+    send_openai_functions,
+)
 import logging
 
 
@@ -90,21 +93,7 @@ class AIMessageBaseClass:
 
         return True
 
-    # def is_valid_inbound_role(self, payload):
-    #     """Check if the inbound role is valid"""
-    #     if "role" not in payload:
-    #         logging.warning("Payload is missing a role: %s", payload)
-    #         return False
-
-    #     if payload["role"] == "user":
-    #         logging.info("Payload is a user, ignorring: %s", payload)
-    #         return False
-
-    #     if payload["role"] == "system":
-    #         logging.info("Payload is a system, ignorring: %s", payload)
-    #         return False
-
-    def get_openai_response(self, inbound_message):
+    def set_openai_query(self, inbound_message):
         """Get the OpenAI response"""
         _messages = []
         _messages.extend(self.inital_openai_messages)
@@ -115,8 +104,12 @@ class AIMessageBaseClass:
             }
         ]
         _messages.extend(new_messages)
+        return _messages
+
+    def get_openai_response(self, openai_query):
+        """Get the OpenAI response"""
         try:
-            res = send_openai_messages(_messages)
+            res = send_openai_messages(openai_query)
             print(f"{self.consumer_id}: get_openai_response - success")
             return res
         except Exception as error:
@@ -161,7 +154,8 @@ class AIMessageBaseClass:
                 if (self.is_valid_inbound_role(message.value)) is False:
                     continue
 
-                openai_res = self.get_openai_response(message.value)
+                openai_query = self.set_openai_query(message.value)
+                openai_res = self.get_openai_response(openai_query)
 
                 outbound_messages = self.parse_openai_res(openai_res)
                 self.send_messages_outbound(outbound_messages)
@@ -176,3 +170,73 @@ class AIMessageBaseClass:
             logging.error("Error subscribing to topic: %s", self.sub_topic_name)
             logging.error(error)
             self.consumer.unsubscribe()
+
+
+class AIFunctionsClass(AIMessageBaseClass):
+    def __init__(
+        self,
+        consumer_id,
+        sub_topic_name,
+        pub_topic_name,
+        inital_openai_messages,
+        functions,
+        function_name,
+        custom_openai_res_parser,
+    ):
+        super().__init__(
+            consumer_id, sub_topic_name, pub_topic_name, inital_openai_messages
+        )
+        self.functions = functions
+        self.function_name = function_name
+        self.custom_openai_res_parser = custom_openai_res_parser
+
+    def is_valid_inbound_role(self, payload):
+        """Check if the inbound role is valid"""
+        if "role" not in payload:
+            logging.warning("Payload is missing a role: %s", payload)
+            return False
+
+        if payload["role"] == "user":
+            logging.info("Payload is a user, ignorring: %s", payload)
+            return False
+
+        if payload["role"] == "system":
+            logging.info("Payload is a system, ignorring: %s", payload)
+            return False
+
+    def handle_openai_response_custom(self, openai_response):
+        """Function that handles the response from OpenAI"""
+        try:
+            arguments_raw = openai_response["choices"][0]["message"]["function_call"][
+                "arguments"
+            ]
+            arguments = json.loads(arguments_raw)
+            print("handle_response_custom: success - parsed openai_response")
+            res = arguments["trends"]
+            print("handle_response_custom: success - parsed records: ", str(len(res)))
+            return res
+        except Exception as error:
+            print("handle_response_custom: error in parsing response")
+            print(error)
+            print("handle_response_custom: ", openai_response)
+
+    def get_openai_response(self, openai_query):
+        """Get the OpenAI response"""
+        try:
+            res = send_openai_functions(
+                messages=openai_query,
+                functions=self.functions,
+                function_name=self.function_name,
+                prase_response=self.handle_openai_response_custom,
+            )
+            print(f"{self.consumer_id}: get_openai_response - success")
+            return res
+        except Exception as error:
+            print(f"{self.consumer_id}: get_openai_response - error")
+            print(error)
+            return None
+
+    def parse_openai_res(self, openai_res):
+        """Parse the OpenAI response"""
+        res = self.custom_openai_res_parser(openai_res, self.consumer_id)
+        return res
