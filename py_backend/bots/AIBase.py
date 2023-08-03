@@ -173,6 +173,15 @@ class AIMessageBaseClass:
 
 
 class AIFunctionsClass(AIMessageBaseClass):
+    """AI Parent Base Class
+
+    * Recieve messages from a Kafka topic
+    * Send messages to a OpenAI API
+    * Recieve messages from a OpenAI API
+    * Send messages to a Kafka topic
+
+    """
+
     def __init__(
         self,
         consumer_id,
