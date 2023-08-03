@@ -3,17 +3,14 @@ import json
 from dotenv import load_dotenv
 from kafka import KafkaProducer, KafkaConsumer
 from flask import Response, request
-from app.market_obsticle import bp
+from py_backend.market_obsticle import bp
 
 BOOTSTRAP_ENDPOINT = ["up-osprey-6230-us1-kafka.upstash.io:9092"]
 TOPIC_NAME = "prod-strategy-market_size"
 
 
-print("Kafka username: ", os.environ.get("UPSTASH_KAFKA_USERNAME"))
-print("Kafka password: ", os.environ.get("UPSTASH_KAFKA_PASSWORD"))
-
-
 def get_event_data(topic_name):
+    load_dotenv()
     consumer = KafkaConsumer(
         bootstrap_servers=BOOTSTRAP_ENDPOINT,
         sasl_mechanism="SCRAM-SHA-512",
@@ -112,6 +109,3 @@ def subscribe_events_market_obsticle_typed():
     )
     # response.headers.add("Access-Control-Allow-Origin", "*")
     return response
-
-
-
