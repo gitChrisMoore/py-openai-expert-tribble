@@ -1,6 +1,7 @@
 import time
 import threading
 from flask import Flask
+from jsonschema import validate
 from py_backend.bots.ceo_advisor_ai import run_ceo_advisor_ai
 from py_backend.bots.ceo_trend_ai import run_trend_ai
 from py_backend.bots.persona_ai import run_persona_ai
@@ -30,3 +31,23 @@ if __name__ == "__main__":
     third_thread.start()
     fourth_thread.start()
     print("All threads started")
+
+# import json
+# from py_backend.problem_solvers.problem_solver_base import _message
+
+# if __name__ == "__main__":
+#     json_file_path = "py_backend/problem_solvers/problem_solver_config.json"
+#     with open(json_file_path, "r") as file:
+#         data = json.load(file)
+
+#     for message in data["initial_context"]:
+#         try:
+#             validate(instance=message, schema=_message)
+#             print(validate(instance=message, schema=_message))
+#         except Exception as error:
+#             print(error)
+#             print(message)
+
+#     print(data)
+
+#     # print(data)

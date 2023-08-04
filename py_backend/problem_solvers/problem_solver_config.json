@@ -1,0 +1,31 @@
+{
+  "name": "persona_ai",
+  "sub_topic_name": "strategy-market_obsticle-general",
+  "pub_topic_name": "strategy-market_obsticle-typed",
+  "initial_context": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant, and responsable for coming up with personas.  Each persona should be unique.  Your job is to provide a concise and unique response. "
+    }
+  ],
+  "functions": [
+    {
+      "name": "save_persona",
+      "description": "parse and structure data in the form of a persona",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "frieldy name of the persona"
+          },
+          "age": {
+            "type": "number",
+            "description": "age of the persona"
+          }
+        },
+        "required": ["name", "age"]
+      }
+    }
+  ]
+}

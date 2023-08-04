@@ -143,6 +143,7 @@ class AIBaseClass:
 
     def send_messages_outbound(self, msgs):
         """Send messages to the Kafka topic"""
+        print(f"{self.source_id}: send_messages_outbound - {msgs}")
         try:
             for msg in msgs:
                 self.producer.send(self.pub_topic_name, value=msg)

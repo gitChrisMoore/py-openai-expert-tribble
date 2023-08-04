@@ -5,20 +5,6 @@ import logging
 logging.basicConfig(level=logging.WARNING)
 
 
-def custom_openai_res_parser(openia_res, consumer_id):
-    """Parse the OpenAI response"""
-    messages = []
-    for i in openia_res:
-        messages.append(
-            {
-                "role": "assistant",
-                "title": i["title"],
-                "implication": i["implication"],
-            }
-        )
-    return messages
-
-
 def run_trend_ai():
     bot_name = "Trend AI"
 
@@ -71,14 +57,6 @@ def run_trend_ai():
             "required": ["title", "implication"],
         },
     ]
-    # functions = [
-    #     {
-    #         "name": "save_market_trend",
-    #         "description": "Save information related to a given market trend",
-    #         "parameters": trends_schema,
-    #         "required": ["title", "implication"],
-    #     },
-    # ]
 
     print("Starting AI: ", bot_name)
     bot = AIFlatten(
@@ -92,21 +70,3 @@ def run_trend_ai():
     )
     bot.run()
     print("Shutting Down AI: ", bot_name)
-
-
-job = {
-    "trends": [
-        {
-            "title": "Shift towards Continuous Integration and Deployment",
-            "implication": "The market is witnessing a growing trend towards continuous integration and deployment (CI/CD). This approach emphasizes automating the build, testing, and deployment processes, enabling faster and more frequent releases without compromising quality.",
-        },
-        {
-            "title": "Agile and DevOps Practices",
-            "implication": "Agile methodologies, such as Scrum and Kanban, have become widely adopted in the software development industry. The integration of quality engineering practices into Agile frameworks enables teams to deliver high-quality software in shorter iterations. Similarly, DevOps practices, which promote collaboration and integration between development and operations teams, are gaining traction in ensuring software quality throughout the release cycle.",
-        },
-        {
-            "title": "Test Automation and AI/ML",
-            "implication": "Test automation is increasingly being used to streamline the testing process and improve efficiency. With the advancements in Artificial Intelligence (AI) and Machine Learning (ML), automated testing tools are becoming smarter, allowing for enhanced test coverage, faster execution, and improved accuracy.",
-        },
-    ]
-}
