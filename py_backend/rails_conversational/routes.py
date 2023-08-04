@@ -71,5 +71,5 @@ def subscribe_events_market_obsticle():
         parse_event_data(RAILS_CONVERSATIONAL_TOPIC_NAME_SUB),
         content_type="text/event-stream",
     )
-    # response.headers.add("Access-Control-Allow-Origin", "*")
+
     return response

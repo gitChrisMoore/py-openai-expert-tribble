@@ -7,6 +7,18 @@ load_dotenv()
 BOOTSTRAP_ENDPOINT = ["up-osprey-6230-us1-kafka.upstash.io:9092"]
 
 
+def custom_value_deserializer(v):
+    # print("custom_value_deserializer: ", v)
+    # print("custom_value_deserializer: ", json.loads(v.decode("utf-8")))
+    return json.loads(v.decode("utf-8"))
+
+
+def custom_value_serializer(v):
+    # print("custom_value_serializer: ", v)
+    # print("custom_value_serializer: ", json.dumps(v).encode("utf-8"))
+    return json.dumps(v).encode("utf-8")
+
+
 def create_kafka_consumer():
     consumer = KafkaConsumer(
         bootstrap_servers=BOOTSTRAP_ENDPOINT,
@@ -14,7 +26,7 @@ def create_kafka_consumer():
         security_protocol="SASL_SSL",
         sasl_plain_username=os.environ.get("UPSTASH_KAFKA_USERNAME"),
         sasl_plain_password=os.environ.get("UPSTASH_KAFKA_PASSWORD"),
-        value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+        value_deserializer=custom_value_deserializer,
     )
     return consumer
 
@@ -26,6 +38,6 @@ def create_kafka_producer():
         security_protocol="SASL_SSL",
         sasl_plain_username=os.environ.get("UPSTASH_KAFKA_USERNAME"),
         sasl_plain_password=os.environ.get("UPSTASH_KAFKA_PASSWORD"),
-        value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+        value_serializer=custom_value_serializer,
     )
     return producer

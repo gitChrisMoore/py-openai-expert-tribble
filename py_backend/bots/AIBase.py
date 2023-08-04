@@ -2,27 +2,19 @@ import os
 import json
 from dotenv import load_dotenv
 from kafka import KafkaProducer, KafkaConsumer
+from py_backend.bots.persona.persona_schema import persona_schema
 from py_backend.open_ai.openai_connection import (
+    send_openai_functions_two,
     send_openai_messages,
     send_openai_functions,
 )
 import logging
+from jsonschema import validate
+from py_backend.utils.kafka_conn import create_kafka_consumer, create_kafka_producer
 
 
 load_dotenv()
 BOOTSTRAP_ENDPOINT = ["up-osprey-6230-us1-kafka.upstash.io:9092"]
-
-
-def custom_value_deserializer(v):
-    # print("custom_value_deserializer: ", v)
-    # print("custom_value_deserializer: ", json.loads(v.decode("utf-8")))
-    return json.loads(v.decode("utf-8"))
-
-
-def custom_value_serializer(v):
-    # print("custom_value_serializer: ", v)
-    # print("custom_value_serializer: ", json.dumps(v).encode("utf-8"))
-    return json.dumps(v).encode("utf-8")
 
 
 class AIMessageBaseClass:
@@ -44,22 +36,8 @@ class AIMessageBaseClass:
         message_counter=0,
         message_threshold=5,
     ):
-        self.consumer = KafkaConsumer(
-            bootstrap_servers=BOOTSTRAP_ENDPOINT,
-            sasl_mechanism="SCRAM-SHA-512",
-            security_protocol="SASL_SSL",
-            sasl_plain_username=os.environ.get("UPSTASH_KAFKA_USERNAME"),
-            sasl_plain_password=os.environ.get("UPSTASH_KAFKA_PASSWORD"),
-            value_deserializer=custom_value_deserializer,
-        )
-        self.producer = KafkaProducer(
-            bootstrap_servers=BOOTSTRAP_ENDPOINT,
-            sasl_mechanism="SCRAM-SHA-512",
-            security_protocol="SASL_SSL",
-            sasl_plain_username=os.environ.get("UPSTASH_KAFKA_USERNAME"),
-            sasl_plain_password=os.environ.get("UPSTASH_KAFKA_PASSWORD"),
-            value_serializer=custom_value_serializer,
-        )
+        self.consumer = create_kafka_consumer()
+        self.producer = create_kafka_producer()
         self.sub_topic_name = sub_topic_name
         self.pub_topic_name = pub_topic_name
         self.consumer_id = consumer_id
@@ -74,9 +52,7 @@ class AIMessageBaseClass:
             return False
 
         if payload["consumer_id"] == self.consumer_id:
-            logging.warning(
-                "Message is from the same consumer_id, ignoring: %s", payload
-            )
+            logging.info("Message is from the same consumer_id, ignoring: %s", payload)
             return False
 
         return True
@@ -242,7 +218,93 @@ class AIFunctionsClass(AIMessageBaseClass):
             return res
         except Exception as error:
             print(f"{self.consumer_id}: get_openai_response - error")
+            print(f"{self.consumer_id}: get_openai_response - {error}")
+            print(
+                f"{self.consumer_id}: get_openai_response - openai_query - {openai_query} "
+            )
+            return None
+
+    def parse_openai_res(self, openai_res):
+        """Parse the OpenAI response"""
+        res = self.custom_openai_res_parser(openai_res, self.consumer_id)
+        return res
+
+
+class AIFunctionsClassTwo(AIMessageBaseClass):
+    """AI Parent Base Class
+
+    * Recieve messages from a Kafka topic
+    * Send messages to a OpenAI API
+    * Recieve messages from a OpenAI API
+    * Send messages to a Kafka topic
+
+    """
+
+    def __init__(
+        self,
+        consumer_id,
+        sub_topic_name,
+        pub_topic_name,
+        inital_openai_messages,
+        functions,
+        function_name,
+        custom_openai_res_parser,
+    ):
+        super().__init__(
+            consumer_id, sub_topic_name, pub_topic_name, inital_openai_messages
+        )
+        self.functions = functions
+        self.function_name = function_name
+        self.custom_openai_res_parser = custom_openai_res_parser
+
+    def is_valid_inbound_role(self, payload):
+        """Check if the inbound role is valid"""
+        if "role" not in payload:
+            logging.warning("Payload is missing a role: %s", payload)
+            return False
+
+        if payload["role"] == "user":
+            logging.info("Payload is a user, ignorring: %s", payload)
+            return False
+
+        if payload["role"] == "system":
+            logging.info("Payload is a system, ignorring: %s", payload)
+            return False
+
+    def handle_openai_response_custom(self, openai_response):
+        """Function that handles the response from OpenAI"""
+        try:
+            arguments_raw = openai_response["choices"][0]["message"]["function_call"][
+                "arguments"
+            ]
+            arguments = json.loads(arguments_raw)
+            print(f"{self.consumer_id}: handle_openai_response_custom - success")
+            print(f"{self.consumer_id}: handle_openai_response_custom - {arguments}")
+        except Exception as error:
+            print("handle_response_custom: error in parsing response")
             print(error)
+            print("handle_response_custom: ", openai_response)
+
+        try:
+            validate(instance=arguments, schema=persona_schema)
+
+            print(f"{self.consumer_id}: handle_openai_response_custom - success")
+        except Exception as error:
+            print(f"{self.consumer_id}: handle_openai_response_custom - error")
+            print(f"{self.consumer_id}: handle_openai_response_custom - {error}")
+
+    def get_openai_response(self, openai_query):
+        """Get the OpenAI response"""
+        try:
+            res = send_openai_functions_two(
+                messages=openai_query,
+                functions=self.functions,
+                function_name=self.function_name,
+            )
+            print(f"{self.consumer_id}: get_openai_response - success")
+            return res
+        except Exception as error:
+            print(f"{self.consumer_id}: get_openai_response - {error}")
             return None
 
     def parse_openai_res(self, openai_res):

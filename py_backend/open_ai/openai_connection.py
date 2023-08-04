@@ -26,7 +26,7 @@ def handle_opeai_response_messages(response):
 def send_openai_messages(messages):
     """Function that sends a message to OpenAI and returns the response"""
     # openai_conn = open_ai_connection()
-    print("messages", messages)
+    # print("messages", messages)
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
@@ -48,7 +48,10 @@ def send_openai_messages(messages):
 def send_openai_functions(messages, functions, function_name, prase_response):
     """Function that sends a message to OpenAI and returns the response"""
     # openai_conn = open_ai_connection()
-    print("messages", messages)
+    # print("messages", messages)
+    print("send_openai_functions: ", functions)
+    print(type(functions))  # Output: <class 'int'>
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
@@ -67,3 +70,23 @@ def send_openai_functions(messages, functions, function_name, prase_response):
     except Exception as error:
         print("Error in send_openai_messages")
         print(error)
+
+
+def send_openai_functions_two(messages, functions, function_name):
+    """Function that sends a message to OpenAI and returns the response"""
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            functions=functions,
+            function_call={"name": function_name},
+            temperature=1,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
+        return response
+    except Exception as error:
+        print("send_openai_functions_two: error")
+        print("send_openai_functions_two: {error}")
