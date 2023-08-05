@@ -90,3 +90,4 @@ def send_openai_functions_two(messages, functions, function_name):
     except Exception as error:
         print("send_openai_functions_two: error")
         print("send_openai_functions_two: {error}")
+        print(error)

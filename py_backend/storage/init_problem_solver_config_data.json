@@ -1,7 +1,8 @@
 [
   {
     "id": 1,
-    "name": "persona_ai",
+    "name": "financial_performance_ai",
+    "description": "Analyzes financial performance, providing the CEO with a clear picture of the company’s financial health.",
     "sub_topic_name": "strategy-market_obsticle-general",
     "pub_topic_name": "strategy-market_obsticle-typed",
     "initial_context": [
@@ -33,7 +34,107 @@
   },
   {
     "id": 2,
-    "name": "new_cool_whatever",
+    "name": "stakeholder_communication_ai",
+    "description": "Streamlines communication between the CEO and various stakeholders, ensuring timely responses and effective information flow.",
+    "sub_topic_name": "strategy-market_obsticle-general",
+    "pub_topic_name": "strategy-market_obsticle-typed",
+    "initial_context": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant, and responsable for coming up with personas.  Each persona should be unique.  Your job is to provide a concise and unique response. "
+      }
+    ],
+    "functions": [
+      {
+        "name": "save_persona",
+        "description": "parse and structure data in the form of a persona",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "frieldy name of the persona"
+            },
+            "age": {
+              "type": "number",
+              "description": "age of the persona"
+            }
+          },
+          "required": ["name", "age"]
+        }
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "facilitate_strategic_planning_ai",
+    "description": "Supports the CEO in strategic planning, using data-driven insights to inform goals, initiatives, and long-term vision.",
+    "sub_topic_name": "strategy-market_obsticle-general",
+    "pub_topic_name": "strategy-market_obsticle-typed",
+    "initial_context": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant, and responsable for coming up with personas.  Each persona should be unique.  Your job is to provide a concise and unique response. "
+      }
+    ],
+    "functions": [
+      {
+        "name": "save_persona",
+        "description": "parse and structure data in the form of a persona",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "frieldy name of the persona"
+            },
+            "age": {
+              "type": "number",
+              "description": "age of the persona"
+            }
+          },
+          "required": ["name", "age"]
+        }
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "optimize_travel_plan_ai",
+    "description": "Coordinates and optimizes travel arrangements for the CEO, considering preferences, schedule, and budget constraints.",
+    "sub_topic_name": "strategy-market_obsticle-general",
+    "pub_topic_name": "strategy-market_obsticle-typed",
+    "initial_context": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant, and responsable for coming up with personas.  Each persona should be unique.  Your job is to provide a concise and unique response. "
+      }
+    ],
+    "functions": [
+      {
+        "name": "save_persona",
+        "description": "parse and structure data in the form of a persona",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "frieldy name of the persona"
+            },
+            "age": {
+              "type": "number",
+              "description": "age of the persona"
+            }
+          },
+          "required": ["name", "age"]
+        }
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "global_market_conditions_ai",
+    "description": "Monitors global economic and market conditions, enabling the CEO to make well-informed international business decisions.",
     "sub_topic_name": "strategy-market_obsticle-general",
     "pub_topic_name": "strategy-market_obsticle-typed",
     "initial_context": [

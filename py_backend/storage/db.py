@@ -54,6 +54,7 @@ def create_problem_solver_config_table(conn):
         CREATE TABLE IF NOT EXISTS problem_solver_config (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
+            description TEXT NOT NULL,
             sub_topic_name TEXT NOT NULL,
             pub_topic_name TEXT NOT NULL,
             initial_context TEXT NOT NULL,
@@ -126,9 +127,11 @@ def save_problem_solver_config(conn, dict_to_save):
         )
 
     conn.execute(
-        "INSERT INTO problem_solver_config (name, sub_topic_name, pub_topic_name, initial_context, functions) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO problem_solver_config (id, name, description, sub_topic_name, pub_topic_name, initial_context, functions) VALUES (?, ?, ?, ?, ?, ?, ?)",
         (
+            dict_to_save["id"],
             dict_to_save["name"],
+            dict_to_save["description"],
             dict_to_save["sub_topic_name"],
             dict_to_save["pub_topic_name"],
             json.dumps(dict_to_save["initial_context"]),
@@ -139,14 +142,14 @@ def save_problem_solver_config(conn, dict_to_save):
     return conn
 
 
-def remove_table(conn, table_name):
+def remove_table(table_name):
     """Removes a table from the database.
 
     Args:
       conn: A connection object to the database.
       table_name: The name of the table to remove.
     """
-
+    conn = create_database(DB_FILEPATH)
     conn.execute("DROP TABLE IF EXISTS {}".format(table_name))
     conn.commit()
 
@@ -161,11 +164,12 @@ def get_problem_solver_configs(conn):
         problem_solver_configs.append(
             {
                 "id": row[0],
+                "description": row[2],
                 "name": row[1],
-                "sub_topic_name": row[2],
-                "pub_topic_name": row[3],
-                "initial_context": row[4],
-                "functions": row[5],
+                "sub_topic_name": row[3],
+                "pub_topic_name": row[4],
+                "initial_context": row[5],
+                "functions": row[6],
             }
         )
     return problem_solver_configs
@@ -190,17 +194,18 @@ def get_problem_solver_config_by_id(conn, id):
     else:
         return {
             "id": row[0],
-            "name": row[1],
-            "sub_topic_name": row[2],
-            "pub_topic_name": row[3],
-            "initial_context": json.loads(row[4]),
-            "functions": json.loads(row[5]),
+            "description": row[1],
+            "name": row[2],
+            "sub_topic_name": row[3],
+            "pub_topic_name": row[4],
+            "initial_context": json.loads(row[5]),
+            "functions": json.loads(row[6]),
         }
 
 
 def init_problem_solver_config_table():
     conn = create_database(DB_FILEPATH)
-    remove_table(conn, "problem_solver_config")
+    remove_table("problem_solver_config")
     create_problem_solver_config_table(conn)
 
     json_file_path = "py_backend/storage/init_problem_solver_config_data.json"
