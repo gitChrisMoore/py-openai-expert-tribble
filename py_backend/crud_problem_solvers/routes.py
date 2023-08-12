@@ -1,11 +1,10 @@
 import json
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, Response
-
-import sqlite3
+from flask import Flask, request, jsonify, Response, abort
 from py_backend.crud_problem_solvers import bp
 from py_backend.storage.db import (
+    get_problem_solver_and_objectives,
     get_problem_solver_configs,
     load_database,
     save_problem_solver_config,
@@ -38,6 +37,18 @@ def get_crud_problem_solvers_route():
     configs = get_problem_solver_configs(conn)
     data = to_front_end(configs)
     return Response(json.dumps(data), mimetype="application/json")
+
+
+@bp.route("/<int:problem_solver_id>", methods=["GET"])
+def get_problem_solver(problem_solver_id):
+    conn = load_database(os.environ.get("DB_FILEPATH"))
+    db_res = get_problem_solver_and_objectives(conn, problem_solver_id)
+    data = to_front_end([db_res])
+
+    if data is None:
+        abort(404)  # Return a 404 Not Found if the problem solver doesn't exist
+
+    return jsonify(data[0])
 
 
 @bp.route("/", methods=["POST"])

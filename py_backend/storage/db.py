@@ -164,8 +164,8 @@ def get_problem_solver_configs(conn):
         problem_solver_configs.append(
             {
                 "id": row[0],
-                "description": row[2],
                 "name": row[1],
+                "description": row[2],
                 "sub_topic_name": row[3],
                 "pub_topic_name": row[4],
                 "initial_context": row[5],
@@ -173,6 +173,56 @@ def get_problem_solver_configs(conn):
             }
         )
     return problem_solver_configs
+
+
+def get_problem_solver_and_objectives(conn, problem_solver_id):
+    """
+    Retrieves a problem solver configuration and its associated objectives.
+
+    Args:
+      conn: A connection object to the database.
+      problem_solver_id: The ID of the problem solver configuration to retrieve.
+
+    Returns:
+      A dictionary representing the problem solver configuration, with the objective IDs included as a list.
+    """
+
+    cur = conn.cursor()
+
+    # Query to retrieve the problem solver configuration
+    cur.execute(
+        """
+        SELECT * FROM problem_solver_config
+        WHERE id = ?;
+    """,
+        (problem_solver_id,),
+    )
+    problem_solver_row = cur.fetchone()
+    if problem_solver_row is None:
+        return None
+    problem_solver = {
+        "id": problem_solver_row[0],
+        "name": problem_solver_row[1],
+        "description": problem_solver_row[2],
+        "sub_topic_name": problem_solver_row[3],
+        "pub_topic_name": problem_solver_row[4],
+        "initial_context": problem_solver_row[5],
+        "functions": problem_solver_row[6],
+        "objective_ids": [],
+    }
+
+    # Query to retrieve the associated objectives
+    cur.execute(
+        """
+        SELECT id FROM func_config
+        WHERE config_id = ?;
+    """,
+        (problem_solver_id,),
+    )
+    objectives_rows = cur.fetchall()
+    problem_solver["objective_ids"] = [row[0] for row in objectives_rows]
+
+    return problem_solver
 
 
 def get_problem_solver_config_by_id(conn, id):

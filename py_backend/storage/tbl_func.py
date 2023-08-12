@@ -22,7 +22,9 @@ def create_func_config_table(conn):
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             description TEXT NOT NULL,
-            parameters TEXT NOT NULL
+            parameters TEXT NOT NULL,
+            config_id INTEGER,
+            FOREIGN KEY (config_id) REFERENCES problem_solver_config (id)
         );
     """
     cur = conn.cursor()

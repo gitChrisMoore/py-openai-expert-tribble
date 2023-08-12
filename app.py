@@ -15,7 +15,9 @@ from py_backend.crud_problem_solvers import bp as crud_problem_solvers_bp
 from py_backend.funcs import bp as funcs_bp
 from py_backend.admin import bp as admin_bp
 from py_backend.storage.db import get_problem_solver_configs, load_database
+from py_backend.storage.db_setup import initialize_database
 from py_backend.storage.tbl_func import get_func_configs, init_func_config_table
+from py_backend.blueprints import bp as blueprints_bp
 
 
 def run_app():
@@ -29,6 +31,7 @@ def run_app():
     )
     app.register_blueprint(funcs_bp, url_prefix="/api/funcs")
     app.register_blueprint(admin_bp, url_prefix="/api/admin")
+    app.register_blueprint(blueprints_bp, url_prefix="/api/blueprints")
     app.run(debug=False, threaded=True)
 
 
@@ -82,3 +85,4 @@ def check_json_schema():
 
 if __name__ == "__main__":
     run_app()
+    # initialize_database()
