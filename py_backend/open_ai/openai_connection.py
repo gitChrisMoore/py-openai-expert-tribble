@@ -91,3 +91,22 @@ def send_openai_functions_two(messages, functions, function_name):
         print("send_openai_functions_two: error")
         print("send_openai_functions_two: {error}")
         print(error)
+
+
+def send_openai_functions_three(messages):
+    """Function that sends a message to OpenAI and returns the response"""
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            temperature=1,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
+        return response
+    except Exception as error:
+        print("send_openai_functions_two: error")
+        print("send_openai_functions_two: {error}")
+        print(error)

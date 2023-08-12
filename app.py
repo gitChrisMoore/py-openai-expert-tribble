@@ -35,19 +35,19 @@ def run_app():
     app.run(debug=False, threaded=True)
 
 
-# if __name__ == "__main__":
-#     json_config = "py_backend/problem_solvers/problem_solver_config.json"
-#     handle_health_checks()
-#     first_thread = threading.Thread(target=run_app)
-#     second_thread = threading.Thread(target=run_ceo_advisor_ai)
-#     third_thread = threading.Thread(target=run_trend_ai)
-#     fourth_thread = threading.Thread(target=run_persona_ai(json_config))
-#     first_thread.start()
-#     second_thread.start()
-#     time.sleep(1)
-#     third_thread.start()
-#     fourth_thread.start()
-#     print("All threads started")
+if __name__ == "__main__":
+    json_config = "py_backend/problem_solvers/problem_solver_config.json"
+    handle_health_checks()
+    first_thread = threading.Thread(target=run_app)
+    second_thread = threading.Thread(target=run_ceo_advisor_ai)
+    third_thread = threading.Thread(target=run_trend_ai)
+    # fourth_thread = threading.Thread(target=run_persona_ai(json_config))
+    first_thread.start()
+    second_thread.start()
+    time.sleep(1)
+    third_thread.start()
+    # fourth_thread.start()
+    print("All threads started")
 
 # import json
 # from py_backend.problem_solvers.problem_solver_base import _message
@@ -83,6 +83,6 @@ def check_json_schema():
         print(openai_res)
 
 
-if __name__ == "__main__":
-    run_app()
-    # initialize_database()
+# if __name__ == "__main__":
+#     run_app()
+#     # initialize_database()

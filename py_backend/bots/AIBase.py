@@ -40,19 +40,19 @@ class AIMessageBaseClass:
         self.producer = create_kafka_producer()
         self.sub_topic_name = sub_topic_name
         self.pub_topic_name = pub_topic_name
-        self.consumer_id = consumer_id
+        self.source_id = consumer_id
         self.inital_openai_messages = inital_openai_messages
         self.message_counter = message_counter
         self.message_threshold = message_threshold
 
-    def is_valid_inbound_consumer_id(self, payload):
-        """Check if the inbound consumer_id is valid"""
-        if "consumer_id" not in payload:
-            logging.warning("Message does not have a consumer_id: %s", payload)
+    def is_valid_inbound_source_id(self, payload):
+        """Check if the inbound source_id is valid"""
+        if "source_id" not in payload:
+            logging.warning("Message does not have a source_id: %s", payload)
             return False
 
-        if payload["consumer_id"] == self.consumer_id:
-            logging.info("Message is from the same consumer_id, ignoring: %s", payload)
+        if payload["source_id"] == self.source_id:
+            logging.info("Message is from the same source_id, ignoring: %s", payload)
             return False
 
         return True
@@ -86,16 +86,16 @@ class AIMessageBaseClass:
         """Get the OpenAI response"""
         try:
             res = send_openai_messages(openai_query)
-            print(f"{self.consumer_id}: get_openai_response - success")
+            print(f"{self.source_id}: get_openai_response - success")
             return res
         except Exception as error:
-            print(f"{self.consumer_id}: get_openai_response - error")
+            print(f"{self.source_id}: get_openai_response - error")
             print(error)
             return None
 
     def parse_openai_res(self, openai_res):
         """Parse the OpenAI response"""
-        openai_res["consumer_id"] = self.consumer_id
+        openai_res["source_id"] = self.source_id
         return [openai_res]
 
     def send_messages_outbound(self, messages):
@@ -103,9 +103,9 @@ class AIMessageBaseClass:
         for message in messages:
             try:
                 self.producer.send(self.pub_topic_name, value=message)
-                print(f"{self.consumer_id}: send_messages_outbound - success")
+                print(f"{self.source_id}: send_messages_outbound - success")
             except Exception as error:
-                print(f"{self.consumer_id}: send_messages_outbound - error")
+                print(f"{self.source_id}: send_messages_outbound - error")
                 print(error)
                 continue
 
@@ -120,12 +120,12 @@ class AIMessageBaseClass:
             self.consumer.subscribe([self.sub_topic_name])
             logging.info(
                 "Consumer ID: %s is listening for messages on topic: %s",
-                self.consumer_id,
+                self.source_id,
                 self.sub_topic_name,
             )
 
             for message in self.consumer:
-                if (self.is_valid_inbound_consumer_id(message.value)) is False:
+                if (self.is_valid_inbound_source_id(message.value)) is False:
                     continue
                 if (self.is_valid_inbound_role(message.value)) is False:
                     continue
@@ -214,19 +214,19 @@ class AIFunctionsClass(AIMessageBaseClass):
                 function_name=self.function_name,
                 prase_response=self.handle_openai_response_custom,
             )
-            print(f"{self.consumer_id}: get_openai_response - success")
+            print(f"{self.source_id}: get_openai_response - success")
             return res
         except Exception as error:
-            print(f"{self.consumer_id}: get_openai_response - error")
-            print(f"{self.consumer_id}: get_openai_response - {error}")
+            print(f"{self.source_id}: get_openai_response - error")
+            print(f"{self.source_id}: get_openai_response - {error}")
             print(
-                f"{self.consumer_id}: get_openai_response - openai_query - {openai_query} "
+                f"{self.source_id}: get_openai_response - openai_query - {openai_query} "
             )
             return None
 
     def parse_openai_res(self, openai_res):
         """Parse the OpenAI response"""
-        res = self.custom_openai_res_parser(openai_res, self.consumer_id)
+        res = self.custom_openai_res_parser(openai_res, self.source_id)
         return res
 
 
