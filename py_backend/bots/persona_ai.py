@@ -1,7 +1,7 @@
 import json
 import logging
 from jsonschema import validate
-from py_backend.bots.AIBaseClass import AIBaseClass
+from py_backend.bots.AIBaseClass import AIBaseClassFunctions
 from py_backend.problem_solvers.conversational_message import conversational_message
 
 logging.basicConfig(level=logging.WARNING)
@@ -32,7 +32,7 @@ def is_valid_initial_context(messages):
             validate(instance=message, schema=conversational_message)
         except Exception as error:
             print(f"is_valid_messages: {error} - {message}")
-            raise InvalidInitialContextException from error
+            raise InvalidInitialContextException from error  # type: ignore
     return True
 
 
@@ -78,7 +78,7 @@ def start_ai(problem_solver_json):
     problem_solver = validate_json_config_file(problem_solver_json)
 
     print("Starting AI: ", problem_solver["name"])
-    bot = AIBaseClass(
+    bot = AIBaseClassFunctions(
         source_id=problem_solver["name"],
         sub_topic_name=problem_solver["sub_topic_name"],
         pub_topic_name=problem_solver["pub_topic_name"],

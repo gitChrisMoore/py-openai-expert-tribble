@@ -16,9 +16,9 @@ def submit_conversation_message():
     """Submit a message to the Kafka topic"""
     data = request.json
     message = {
-        "consumer_id": "front_end",
+        "source_id": "front_end",
         "role": "user",
-        "content": data["content"],
+        "payload": data["content"],
     }
     load_dotenv()
     producer = KafkaProducer(

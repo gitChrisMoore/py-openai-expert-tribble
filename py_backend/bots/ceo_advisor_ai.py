@@ -1,4 +1,4 @@
-from py_backend.bots.AIBaseClass import AIBaseClassBase
+from py_backend.bots.AIBaseClass import AIBaseClass
 import logging
 
 logging.basicConfig(level=logging.WARNING)
@@ -15,7 +15,7 @@ def run_ceo_advisor_ai():
     ]
 
     print("Starting AI: ", bot_name)
-    bot = AIBaseClassBase(
+    bot = AIBaseClass(
         source_id="generic_bot",
         sub_topic_name="strategy-market_obsticle-general",
         pub_topic_name="strategy-market_obsticle-general",

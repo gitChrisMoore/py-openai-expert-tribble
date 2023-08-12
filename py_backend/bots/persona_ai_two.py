@@ -1,4 +1,4 @@
-from py_backend.bots.AIBaseClass import AIBaseClass
+from py_backend.bots.AIBaseClass import AIBaseClassFunctions
 import logging
 
 from py_backend.bots.persona.persona_schema import persona_schema
@@ -6,7 +6,7 @@ from py_backend.bots.persona.persona_schema import persona_schema
 logging.basicConfig(level=logging.WARNING)
 
 
-def run_persona_ai():
+def run_persona_ai_two():
     bot_name = "persona_ai"
 
     default_messages = [
@@ -37,7 +37,7 @@ def run_persona_ai():
     ]
 
     print("Starting AI: ", bot_name)
-    bot = AIBaseClass(
+    bot = AIBaseClassFunctions(
         source_id=bot_name,
         sub_topic_name="strategy-market_obsticle-general",
         pub_topic_name="strategy-market_obsticle-typed",
