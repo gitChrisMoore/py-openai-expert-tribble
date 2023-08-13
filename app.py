@@ -46,7 +46,7 @@ def run_app():
     # host = os.environ.get("FLASK_HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
     # port = int(os.environ.get("FLASK_PORT", "5000"))  # Default to 5000 if not set
     # app.run(host=host, port=port, debug=False, threaded=True)
-    app.run(debug=True, port=os.getenv("FLASK_PORT", default=5000))  # type: ignore
+    app.run(debug=True, port=os.getenv("FLASK_PORT", default=5000), threaded=True)  # type: ignore
     # app.run(debug=False, threaded=True)
 
 
