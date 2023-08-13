@@ -28,6 +28,11 @@ def run_app():
     """Runs the Flask app."""
     logging.basicConfig(level=logging.WARNING)
     app = Flask(__name__)
+
+    @app.route("/")
+    def index():
+        return """This module runs the Flask app and the bots."""
+
     app.register_blueprint(
         rails_conversational_bp, url_prefix="/api/rails_conversational"
     )
@@ -50,6 +55,7 @@ if __name__ == "__main__":
     # fourth_thread = threading.Thread(target=run_persona_ai(JSON_CONFIG))
     fourth_thread = threading.Thread(target=run_persona_ai_two)
     # fourth_thread = threading.Thread(target=run_persona_ai(JSON_CONFIG))
+
     first_thread.start()
     second_thread.start()
     time.sleep(1)
