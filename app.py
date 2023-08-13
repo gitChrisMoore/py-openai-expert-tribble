@@ -22,16 +22,17 @@ logging.getLogger("py_backend.bots.persona_ai_two").setLevel(logging.WARNING)
 
 # TODO:
 # = [ ] Add functionality to read from config file
+app = Flask(__name__)
+
+
+@app.route("/")
+def index():
+    return """This module runs the Flask app and the bots."""
 
 
 def run_app():
     """Runs the Flask app."""
     logging.basicConfig(level=logging.WARNING)
-    app = Flask(__name__)
-
-    @app.route("/")
-    def index():
-        return """This module runs the Flask app and the bots."""
 
     app.register_blueprint(
         rails_conversational_bp, url_prefix="/api/rails_conversational"
@@ -41,10 +42,11 @@ def run_app():
     app.register_blueprint(blueprints_bp, url_prefix="/api/blueprints")
     app.register_blueprint(objectives_bp, url_prefix="/api/objectives")
     logging.basicConfig(level=logging.WARNING)
-    host = os.environ.get("FLASK_HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
     # host = os.environ.get("FLASK_HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
-    port = int(os.environ.get("FLASK_PORT", "5000"))  # Default to 5000 if not set
-    app.run(host=host, port=port, debug=False, threaded=True)
+    # host = os.environ.get("FLASK_HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
+    # port = int(os.environ.get("FLASK_PORT", "5000"))  # Default to 5000 if not set
+    # app.run(host=host, port=port, debug=False, threaded=True)
+    app.run(debug=True, port=os.getenv("FLASK_PORT", default=5000))  # type: ignore
     # app.run(debug=False, threaded=True)
 
 
