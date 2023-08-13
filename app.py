@@ -1,6 +1,7 @@
 """This module runs the Flask app and the bots."""
 import time
 import threading
+import os
 from flask import Flask
 from py_backend.bots.ceo_advisor_ai import run_ceo_advisor_ai
 from py_backend.bots.ceo_trend_ai import run_trend_ai
@@ -35,7 +36,9 @@ def run_app():
     app.register_blueprint(blueprints_bp, url_prefix="/api/blueprints")
     app.register_blueprint(objectives_bp, url_prefix="/api/objectives")
     logging.basicConfig(level=logging.WARNING)
-    app.run(debug=False, threaded=True)
+    host = os.environ.get("FLASK_HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
+    port = int(os.environ.get("FLASK_PORT", "5000"))  # Default to 5000 if not set
+    app.run(host=host, port=port)
 
 
 if __name__ == "__main__":
