@@ -41,10 +41,10 @@ def run_app():
     app.register_blueprint(blueprints_bp, url_prefix="/api/blueprints")
     app.register_blueprint(objectives_bp, url_prefix="/api/objectives")
     # host = os.environ.get("FLASK_HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
-    # host = os.environ.get("FLASK_HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
+    host = os.environ.get("HOST", "0.0.0.0")  # Default to '0.0.0.0' if not set
     port = int(os.environ.get("PORT", "5000"))  # Default to 5000 if not set
     # app.run(host=host, port=port, debug=False, threaded=True)
-    app.run(debug=False, port=port, threaded=True)  # type: ignore
+    app.run(debug=False, host=host, port=port, threaded=True)  # type: ignore
     # app.run(debug=False, threaded=True)
 
 
