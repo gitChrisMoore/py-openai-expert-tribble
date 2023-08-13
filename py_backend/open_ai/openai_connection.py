@@ -2,7 +2,10 @@
 import os
 from dotenv import load_dotenv
 import openai
+import logging
 
+logging.getLogger("openai_connection").setLevel(logging.WARNING)
+log = logging.getLogger("openai_connection")
 
 try:
     load_dotenv()
@@ -11,6 +14,8 @@ try:
 except Exception as ex:
     print("OpenAI Key Not Set")
     print(ex)
+
+FILE_ID = "openai_connection.py"
 
 
 def handle_opeai_response_messages(response):
@@ -86,11 +91,18 @@ def send_openai_functions_two(messages, functions, function_name):
             frequency_penalty=0,
             presence_penalty=0,
         )
+        log.info(
+            "%s: send_openai_functions_two - response - %s",
+            FILE_ID,
+            response,
+        )
         return response
-    except Exception as error:
-        print("send_openai_functions_two: error")
-        print("send_openai_functions_two: {error}")
-        print(error)
+    except Exception as err:
+        log.error(
+            "%s: send_openai_functions_two - error - %s",
+            FILE_ID,
+            err,
+        )
 
 
 def send_openai_functions_three(messages):
@@ -105,8 +117,15 @@ def send_openai_functions_three(messages):
             frequency_penalty=0,
             presence_penalty=0,
         )
+        log.info(
+            "%s: send_openai_functions_three - response - %s",
+            FILE_ID,
+            response,
+        )
         return response
-    except Exception as error:
-        print("send_openai_functions_two: error")
-        print("send_openai_functions_two: {error}")
-        print(error)
+    except Exception as err:
+        log.error(
+            "%s: send_openai_functions_three - error - %s",
+            FILE_ID,
+            err,
+        )

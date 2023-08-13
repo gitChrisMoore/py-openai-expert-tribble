@@ -63,7 +63,3 @@ def initialize_database():
     create_tables()
     load_blueprints()
     load_objectives()
-
-
-if __name__ == "__main__":
-    initialize_database()

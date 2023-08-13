@@ -1,10 +1,7 @@
 import json
-import logging
 from jsonschema import validate
 from py_backend.bots.AIBaseClass import AIBaseClassFunctions
 from py_backend.problem_solvers.conversational_message import conversational_message
-
-logging.basicConfig(level=logging.WARNING)
 
 
 class InvalidInitialContextException(Exception):
@@ -86,6 +83,9 @@ def start_ai(problem_solver_json):
         functions=problem_solver["functions"],
         function_name=problem_solver["functions"][0]["name"],
         valid_schema=problem_solver["functions"][0]["parameters"],
+        ignored_roles=["system"],
+        source_type="functional",
+        ignored_source_types=["functional"],
     )
     bot.run()
     print("Shutting Down AI: ", problem_solver["name"])

@@ -1,10 +1,14 @@
 import os
 import json
+import logging
 from dotenv import load_dotenv
 from kafka import KafkaConsumer
 from flask import Response
 from py_backend.rails_functional import bp
 
+
+logging.getLogger("rails_functional").setLevel(logging.WARNING)
+log = logging.getLogger("rails_functional")
 
 BOOTSTRAP_ENDPOINT = ["up-osprey-6230-us1-kafka.upstash.io:9092"]
 RAILS_FUNCTIONAL_TOPIC_NAME_SUB = "strategy-market_obsticle-typed"
@@ -27,7 +31,8 @@ def parse_event_data(topic_name):
         print("subscribing to topic", topic_name)
         consumer.subscribe([topic_name])
         for message in consumer:
-            print(f"{ROUTES_ID}: {topic_name} - message recieved")
+            # print(f"{ROUTES_ID}: {topic_name} - message recieved")
+            log.info(f"{ROUTES_ID}: {topic_name} - message recieved")
             # respond to web listner
             yield f"data: {message.value}\n\n"
     except Exception as e:

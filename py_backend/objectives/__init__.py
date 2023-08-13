@@ -1,8 +1,8 @@
 from flask import Blueprint
 
 bp = Blueprint(
-    "funcs",
+    "objectives",
     __name__,
 )
 
-from py_backend.funcs import routes
+from py_backend.objectives import routes

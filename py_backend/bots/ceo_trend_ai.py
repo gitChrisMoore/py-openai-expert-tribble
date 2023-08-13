@@ -1,8 +1,5 @@
 from py_backend.bots.AIBaseClass import AIFlatten
 from py_backend.bots.trend.trend_schema import trend_schema
-import logging
-
-logging.basicConfig(level=logging.WARNING)
 
 
 def run_trend_ai():
@@ -67,6 +64,9 @@ def run_trend_ai():
         functions=functions,
         function_name="save_market_trend",
         valid_schema=trend_schema,
+        ignored_roles=["system"],
+        source_type="functional",
+        ignored_source_types=["functional"],
     )
     bot.run()
     print("Shutting Down AI: ", bot_name)

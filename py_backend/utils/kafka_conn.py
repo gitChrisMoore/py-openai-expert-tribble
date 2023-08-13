@@ -1,6 +1,11 @@
 import os
 import json
 from dotenv import load_dotenv
+import logging
+
+logging.getLogger("kafka").setLevel(logging.WARNING)
+
+
 from kafka import KafkaProducer, KafkaConsumer
 
 load_dotenv()

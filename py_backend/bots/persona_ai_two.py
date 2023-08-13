@@ -1,9 +1,5 @@
 from py_backend.bots.AIBaseClass import AIBaseClassFunctions
-import logging
-
 from py_backend.bots.persona.persona_schema import persona_schema
-
-logging.basicConfig(level=logging.WARNING)
 
 
 def run_persona_ai_two():
@@ -45,6 +41,9 @@ def run_persona_ai_two():
         functions=functions,
         function_name=functions[0]["name"],
         valid_schema=persona_schema,
+        ignored_roles=["system"],
+        source_type="functional",
+        ignored_source_types=["functional"],
     )
     bot.run()
     print("Shutting Down AI: ", bot_name)

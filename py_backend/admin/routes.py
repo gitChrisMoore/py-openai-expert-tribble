@@ -1,11 +1,8 @@
+import json
 from dotenv import load_dotenv
 from flask import Response
 from py_backend.admin import bp
-from py_backend.storage.db import (
-    init_problem_solver_config_table,
-    remove_table,
-)
-from py_backend.storage.tbl_func import init_func_config_table
+from py_backend.storage.db_setup import initialize_database
 
 
 load_dotenv()
@@ -13,12 +10,23 @@ load_dotenv()
 
 @bp.route("/reset_database", methods=["GET"])
 def reset_database():
-    remove_table("problem_solver_config")
-    remove_table("func_config")
-    funcs = init_func_config_table()
-    if funcs is None:
-        return Response("Error: Func Table Failture", status=500)
-    blueprints = init_problem_solver_config_table()
-    if blueprints is None:
-        return Response("Error: Blueprint Table Failture", status=500)
-    return Response("Success", status=200)
+    """Reset the database and initialize it with the default data."""
+    try:
+        initialize_database()
+        response = {
+            "success": True,
+            "message": "Database has been successfully reset and initialized.",
+        }
+        return Response(
+            json.dumps(response), content_type="application/json", status=200
+        )
+    except Exception as error:
+        # Here, you can log the error if needed
+        print(f"An error occurred while resetting the database: {str(error)}")
+        response = {
+            "success": False,
+            "message": f"Failed to reset the database: {str(error)}",
+        }
+        return Response(
+            json.dumps(response), content_type="application/json", status=500
+        )

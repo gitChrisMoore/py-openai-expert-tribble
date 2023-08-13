@@ -1,7 +1,4 @@
 from py_backend.bots.AIBaseClass import AIBaseClass
-import logging
-
-logging.basicConfig(level=logging.WARNING)
 
 
 def run_ceo_advisor_ai():
@@ -20,6 +17,9 @@ def run_ceo_advisor_ai():
         sub_topic_name="strategy-market_obsticle-general",
         pub_topic_name="strategy-market_obsticle-general",
         inital_openai_messages=default_messages,
+        ignored_roles=["system"],
+        source_type="conversational",
+        ignored_source_types=["functional"],
     )
     bot.run()
     print("Shutting Down AI: ", bot_name)
