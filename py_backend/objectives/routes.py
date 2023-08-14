@@ -28,6 +28,7 @@ def get_objectives():
     try:
         # Query all objectives from the database
         objectives = session.query(Objective).all()
+        print(objectives)
 
         # Convert objectives into a JSON-serializable format
         objectives_json = [objective_to_json(obj) for obj in objectives]
