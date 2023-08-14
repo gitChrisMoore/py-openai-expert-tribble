@@ -3,6 +3,7 @@ import time
 import threading
 import os
 from flask import Flask
+from flask_cors import CORS
 from py_backend.bots.ceo_advisor_ai import run_ceo_advisor_ai
 from py_backend.bots.ceo_trend_ai import run_trend_ai
 from py_backend.bots.persona_ai_two import run_persona_ai_two
@@ -23,6 +24,7 @@ logging.getLogger("py_backend.bots.persona_ai_two").setLevel(logging.WARNING)
 # TODO:
 # = [ ] Add functionality to read from config file
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
