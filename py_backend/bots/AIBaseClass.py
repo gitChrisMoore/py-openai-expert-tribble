@@ -49,7 +49,7 @@ class AIBaseClass:
         ignored_roles,
         ignored_source_types,
         message_counter=0,
-        message_threshold=10,
+        message_threshold=200,
         source_type="conversational",
     ):
         self.consumer = create_kafka_consumer()
