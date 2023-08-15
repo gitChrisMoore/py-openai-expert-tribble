@@ -270,7 +270,7 @@ class AIBaseClassFunctions(AIBaseClass):
         function_name,
         valid_schema,
         message_counter=0,
-        message_threshold=5,
+        message_threshold=50,
     ):
         super().__init__(
             source_id,
@@ -338,7 +338,7 @@ class AIFlatten(AIBaseClass):
         function_name,
         valid_schema,
         message_counter=0,
-        message_threshold=5,
+        message_threshold=50,
     ):
         super().__init__(
             source_id,
