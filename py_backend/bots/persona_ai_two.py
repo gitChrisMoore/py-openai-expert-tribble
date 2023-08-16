@@ -1,5 +1,13 @@
 from py_backend.bots.AIBaseClass import AIBaseClassFunctions
+from py_backend.bots.BlueprintClass import (
+    BlueprintClass,
+    FunctionSchema,
+    ParameterSchema,
+)
+
 from py_backend.bots.persona.persona_schema import persona_schema
+from py_backend.storage.db_blueprint import load_blueprint_by_name
+from py_backend.storage.db_objective import load_objective_by_name
 
 
 def run_persona_ai_two():

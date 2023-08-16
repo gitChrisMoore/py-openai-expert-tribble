@@ -5,9 +5,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from py_backend.bots.AIThreadManager import thread_manager
-from py_backend.bots.ceo_advisor_ai import run_ceo_advisor_ai
-from py_backend.bots.ceo_trend_ai import run_trend_ai
-from py_backend.bots.persona_ai_two import run_persona_ai_two
+from py_backend.bots.droid_assembly import run_droid
 from py_backend.health_checks.env_health_check import handle_health_checks
 from py_backend.rails_conversational import bp as rails_conversational_bp
 from py_backend.rails_functional import bp as rails_functional_bp
@@ -43,5 +41,6 @@ if __name__ == "__main__":
     # JSON_CONFIG = "py_backend/problem_solvers/problem_solver_config.json"
     handle_health_checks()
     threading.Thread(name="Flask App", target=run_app).start()
+    thread_manager.add_threads([("Persona AI Two", run_droid)])
     thread_manager.start_threads()
     print("All threads started")
