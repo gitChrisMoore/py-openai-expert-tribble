@@ -63,18 +63,54 @@ def load_blueprint_by_name(blueprint_name: str):
         session.close()
 
 
-# def ensure_blueprint_class(obj, expected_type: BlueprintClass):
-#     """
-#     Ensures the given object is an instance of the expected type.
+def create_blueprint(blueprint_data):
+    """Creates a new blueprint in the database."""
 
-#     Parameters:
-#         obj: The object to check.
-#         expected_type (type): The type the object is expected to be an instance of.
+    engine = create_engine(f"sqlite:///{DB_FILEPATH}")
+    session = Session(engine)
 
-#     Raises:
-#         TypeError: If obj is not an instance of expected_type.
-#     """
-#     if not isinstance(obj, expected_type):
-#         raise TypeError(
-#             f"Expected an instance of {expected_type.__name__}, but got {type(obj).__name__}"
-#         )
+    blueprint_id = blueprint_data.get("blueprint_id")
+
+    # Check for duplicate blueprint_name or blueprint_id
+    existing_blueprint_name = (
+        session.query(Blueprint)
+        .filter_by(blueprint_name=blueprint_data["blueprint_name"])
+        .first()
+    )
+
+    if blueprint_id:
+        existing_blueprint_id = (
+            session.query(Blueprint).filter_by(blueprint_id=blueprint_id).first()
+        )
+        if existing_blueprint_id:
+            return False, f"Blueprint with ID '{blueprint_id}' already exists."
+    if existing_blueprint_name:
+        return (
+            False,
+            f"Blueprint with name '{blueprint_data['blueprint_name']}' already exists.",
+        )
+
+    try:
+        blueprint = Blueprint(
+            blueprint_id=blueprint_id,
+            blueprint_name=blueprint_data["blueprint_name"],
+            blueprint_description=blueprint_data["blueprint_description"],
+            sub_topic_name=blueprint_data["sub_topic_name"],
+            pub_topic_name=blueprint_data["pub_topic_name"],
+            initial_context=json.dumps(blueprint_data["initial_context"]),
+        )
+    except Exception as error:
+        return False, f"Error constructing Blueprint instance: {str(error)}"
+
+    session.add(blueprint)
+    try:
+        session.commit()
+        return (
+            True,
+            f"Blueprint '{blueprint_data['blueprint_name']}' has been created successfully.",
+        )
+    except Exception as error:
+        session.rollback()
+        return False, str(error)
+    finally:
+        session.close()

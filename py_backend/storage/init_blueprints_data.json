@@ -1,5 +1,18 @@
 [
   {
+    "blueprint_id": "e7602ac8-80f7-4584-aec4-053ce3590291",
+    "blueprint_name": "persona_ai",
+    "blueprint_description": "Make personas",
+    "sub_topic_name": "strategy-market_obsticle-general",
+    "pub_topic_name": "strategy-market_obsticle-typed",
+    "initial_context": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant, and responsable for coming up with personas.  Each persona should be unique.  Your job is to provide a concise and unique response. "
+      }
+    ]
+  },
+  {
     "blueprint_name": "financial_performance_ai",
     "blueprint_description": "Analyzes financial performance, providing the CEO with a clear picture of the company’s financial health.",
     "sub_topic_name": "strategy-market_obsticle-general",

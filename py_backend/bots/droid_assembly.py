@@ -13,10 +13,10 @@ logging.getLogger("droid_assembly").setLevel(logging.WARNING)
 log = logging.getLogger("droid_assembly")
 
 
-def load_blueprint_and_objective():
-    """Load the blueprint and objective from the database"""
-    res_status, blueprint = load_blueprint_by_name("financial_performance_ai")
-    res_status_objective, objective = load_objective_by_name("build_persona")
+def load_blueprint_and_objective(blueprint_id, objective_id):
+    """Load the blueprint and objective from the database by their IDs."""
+    res_status, blueprint = load_blueprint_by_name(blueprint_id)
+    res_status_objective, objective = load_objective_by_name(objective_id)
 
     if not res_status or not res_status_objective:
         raise ValueError("Failed to load blueprint or objective")
@@ -116,9 +116,9 @@ def initialize_ai_bot(bp, fun):
     return None
 
 
-def run_droid():
-    """Run the droid"""
-    blueprint, objective = load_blueprint_and_objective()
+def run_droid(blueprint_id, objective_id):
+    """Run the droid based on the provided blueprint and objective IDs."""
+    blueprint, objective = load_blueprint_and_objective(blueprint_id, objective_id)
 
     # Create Blueprint instance
     bp = create_blueprint_instance(blueprint)
