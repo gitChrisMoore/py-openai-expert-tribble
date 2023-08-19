@@ -19,8 +19,8 @@ class AIThreadManager:
         """
         if initial_threads is None:
             initial_threads = [
-                ("CEO Advisor AI", run_ceo_advisor_ai),
-                ("CEO Trend AI", run_trend_ai),
+                # ("CEO Advisor AI", run_ceo_advisor_ai),
+                # ("CEO Trend AI", run_trend_ai),
                 # ("Persona AI Two", run_droid),
             ]
 
@@ -33,17 +33,19 @@ class AIThreadManager:
         Args:
             thread_data (list): List of tuples where each tuple is (thread_name, thread_function).
         """
-        print(thread_data)
-        for name, target in thread_data:
-            self.threads.append(threading.Thread(name=name, target=target))
+
+        for name, target, args in thread_data:
+            self.threads.append(threading.Thread(name=name, target=target, args=args))
 
     def start_threads(self):
         """Starts all threads that aren't already running."""
         all_started_successfully = True  # Flag to track thread start status
 
+        print(f"Starting threas: {self.threads}")
         for thread in self.threads:
             if not thread.is_alive():
                 try:
+                    print(f"Starting thread {thread.name}")
                     thread.start()
                 except threading.ThreadError as err:
                     all_started_successfully = False  # Update flag on exception

@@ -61,3 +61,24 @@ def load_objective_by_name(objective_name: str):
 
     finally:
         session.close()
+
+
+def load_objective_by_id(objective_id: str):
+    """Loads a objective from the database by its name."""
+    engine = create_engine(f"sqlite:///{DB_FILEPATH}")
+    session = Session(engine)
+
+    try:
+        db_query = session.query(Objective).filter_by(objective_id=objective_id).one()
+
+        # Ensure objective retrieved is an instance of the Blueprint dataclass
+        if isinstance(db_query, Objective):
+            return True, object_as_dict(db_query)
+
+        raise ValueError("Retrieved object is not an instance of Blueprint")
+
+    except Exception as error:
+        return False, str(error)
+
+    finally:
+        session.close()

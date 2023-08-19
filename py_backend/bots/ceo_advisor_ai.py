@@ -13,7 +13,7 @@ def run_ceo_advisor_ai():
 
     print("Starting AI: ", bot_name)
     bot = AIBaseClass(
-        source_id="generic_bot",
+        source_id="generic_botaaa",
         sub_topic_name="strategy-market_obsticle-general",
         pub_topic_name="strategy-market_obsticle-general",
         inital_openai_messages=default_messages,

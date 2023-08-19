@@ -13,6 +13,40 @@
     ]
   },
   {
+    "blueprint_id": "c720aaae-06ea-479b-b7f6-2397e7174f6b",
+    "blueprint_name": "trend_bot",
+    "blueprint_description": "Identifies market trends",
+    "sub_topic_name": "strategy-market_obsticle-general",
+    "pub_topic_name": "strategy-market_obsticle-typed",
+    "initial_context": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant that helps consultants generate market trends. When a consultant submits a topic, you will generate a market trend based on the industry or market. Your response should be concise and unique. The title should be a short, punchy description of the overall trend. The implication should be two sentances, and describe examples.  You should not repeat. No part of your response should use the quotes charecter."
+      },
+      {
+        "role": "user",
+        "content": "Software Quality Engineering"
+      },
+      {
+        "role": "assistant",
+        "content": "Title: DevQualOps. Implication: The recent focus on fast, iterative releases has led to increased tech debt, agile burnout, and scalability issues. DevQualOps emerges as a solution which places more emphasis on integrating quality management and stakeholder expectations into the development process."
+      }
+    ]
+  },
+  {
+    "blueprint_id": "c720aaae-06ea-479b-b7f6-2397e7174fcc",
+    "blueprint_name": "generic_bot",
+    "blueprint_description": "Identifies market trends",
+    "sub_topic_name": "strategy-market_obsticle-general",
+    "pub_topic_name": "strategy-market_obsticle-general",
+    "initial_context": [
+      {
+        "role": "system",
+        "content": "Imagine you are a Advisor for the USER who is a CEO.  Your job is to try and help the CEO refine the market trends that they are talking about.  No part of your response should use the quotes charecter."
+      }
+    ]
+  },
+  {
     "blueprint_name": "financial_performance_ai",
     "blueprint_description": "Analyzes financial performance, providing the CEO with a clear picture of the company’s financial health.",
     "sub_topic_name": "strategy-market_obsticle-general",

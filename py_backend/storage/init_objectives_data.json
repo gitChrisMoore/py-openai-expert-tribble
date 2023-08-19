@@ -64,6 +64,34 @@
     }
   },
   {
+    "objective_id": "c720aaae-06ea-479b-b7f6-2397e7174f6o",
+    "objective_name": "save_market_trend",
+    "objective_description": "Save information related to a given market trend",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "trends": {
+          "type": "array",
+          "description": "Array of market trends",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "frieldy name of the market trend"
+              },
+              "implication": {
+                "type": "string",
+                "description": "Inference of what the market trend means to the industry"
+              }
+            }
+          }
+        }
+      },
+      "required": ["title", "implication"]
+    }
+  },
+  {
     "objective_id": "94264995-61ee-4f67-ad6d-be8a4be667c3",
     "objective_name": "define_market_focus",
     "objective_description": "Generates target market by considering factors like geographic location, age, income level, and consumer interests.",

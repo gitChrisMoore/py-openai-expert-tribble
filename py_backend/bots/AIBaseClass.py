@@ -386,6 +386,7 @@ class AIFlatten(AIBaseClass):
 
     def format_outbound_messages(self, data):
         """Prepare the outbound messages"""
+        print(f"format_outbound_messages - {data}")
         try:
             res = []
             for msg in data:

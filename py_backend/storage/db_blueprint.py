@@ -63,6 +63,32 @@ def load_blueprint_by_name(blueprint_name: str):
         session.close()
 
 
+def load_blueprint_by_id(blueprint_id: str):
+    """Loads a blueprint from the database by its name."""
+    engine = create_engine(f"sqlite:///{DB_FILEPATH}")
+    session = Session(engine)
+
+    try:
+        db_query = (
+            session.query(Blueprint)
+            .options(joinedload(Blueprint.blueprint_objectives))
+            .filter_by(blueprint_id=blueprint_id)
+            .one()
+        )
+
+        # Ensure blueprint retrieved is an instance of the Blueprint dataclass
+        if isinstance(db_query, Blueprint):
+            return True, object_as_dict(db_query)
+
+        raise ValueError("Retrieved object is not an instance of Blueprint")
+
+    except Exception as error:
+        return False, str(error)
+
+    finally:
+        session.close()
+
+
 def create_blueprint(blueprint_data):
     """Creates a new blueprint in the database."""
 

@@ -61,49 +61,49 @@ class BlueprintClass:
     )
 
 
-test_data_parameters = {
-    "type": "object",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "frieldy name of the persona",
-        },
-        "age": {
-            "type": "number",
-            "description": "age of the persona",
-        },
-        "personality_traits": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "description": "personality traits of the persona",
-            },
-        },
-    },
-    "required": [
-        "name",
-        "age",
-        "personality_traits",
-    ],
-}
+# test_data_parameters = {
+#     "type": "object",
+#     "properties": {
+#         "name": {
+#             "type": "string",
+#             "description": "frieldy name of the persona",
+#         },
+#         "age": {
+#             "type": "number",
+#             "description": "age of the persona",
+#         },
+#         "personality_traits": {
+#             "type": "array",
+#             "items": {
+#                 "type": "string",
+#                 "description": "personality traits of the persona",
+#             },
+#         },
+#     },
+#     "required": [
+#         "name",
+#         "age",
+#         "personality_traits",
+#     ],
+# }
 
-test_data_functions = [
-    {
-        "name": "save_persona",
-        "description": "Save information related to a given persona",
-        "parameters": test_data_parameters,
-        "required": [
-            "name",
-            "age",
-            "occupation",
-            "personality_traits",
-            "education",
-            "interests",
-            "pain_points",
-            "goals",
-        ],
-    },
-]
+# test_data_functions = [
+#     {
+#         "name": "save_persona",
+#         "description": "Save information related to a given persona",
+#         "parameters": test_data_parameters,
+#         "required": [
+#             "name",
+#             "age",
+#             "occupation",
+#             "personality_traits",
+#             "education",
+#             "interests",
+#             "pain_points",
+#             "goals",
+#         ],
+#     },
+# ]
 
 
 def construct_function_schema(data: dict) -> FunctionSchema:
