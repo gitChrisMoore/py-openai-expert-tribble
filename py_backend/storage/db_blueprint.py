@@ -1,10 +1,13 @@
+import logging
 import json
 from sqlalchemy import create_engine
-
 from sqlalchemy.orm import Session, joinedload
 from py_backend.storage.db_models import Blueprint
 from py_backend.storage.db_utils import object_as_dict
 
+
+logging.getLogger("db_blueprint").setLevel(logging.WARNING)
+log = logging.getLogger("db_blueprint")
 
 DB_FILEPATH = "py_backend/storage/data_base.db"
 
@@ -18,6 +21,7 @@ def save_blueprint(blueprint_data):
         blueprint = Blueprint(
             blueprint_name=blueprint_data["blueprint_name"],
             blueprint_description=blueprint_data["blueprint_description"],
+            droid_type=blueprint_data["droid_type"],
             sub_topic_name=blueprint_data["sub_topic_name"],
             pub_topic_name=blueprint_data["pub_topic_name"],
             initial_context=json.dumps(blueprint_data["initial_context"]),
@@ -64,21 +68,20 @@ def load_blueprint_by_name(blueprint_name: str):
 
 
 def load_blueprint_by_id(blueprint_id: str):
-    """Loads a blueprint from the database by its name."""
+    """Loads a blueprint from the database by its blueprint_id."""
     engine = create_engine(f"sqlite:///{DB_FILEPATH}")
     session = Session(engine)
 
     try:
-        db_query = (
+        res = (
             session.query(Blueprint)
             .options(joinedload(Blueprint.blueprint_objectives))
             .filter_by(blueprint_id=blueprint_id)
             .one()
         )
 
-        # Ensure blueprint retrieved is an instance of the Blueprint dataclass
-        if isinstance(db_query, Blueprint):
-            return True, object_as_dict(db_query)
+        if isinstance(res, Blueprint):
+            return True, res
 
         raise ValueError("Retrieved object is not an instance of Blueprint")
 
@@ -121,10 +124,12 @@ def create_blueprint(blueprint_data):
             blueprint_id=blueprint_id,
             blueprint_name=blueprint_data["blueprint_name"],
             blueprint_description=blueprint_data["blueprint_description"],
+            droid_type=blueprint_data["droid_type"],
             sub_topic_name=blueprint_data["sub_topic_name"],
             pub_topic_name=blueprint_data["pub_topic_name"],
             initial_context=json.dumps(blueprint_data["initial_context"]),
         )
+
     except Exception as error:
         return False, f"Error constructing Blueprint instance: {str(error)}"
 
@@ -135,6 +140,7 @@ def create_blueprint(blueprint_data):
             True,
             f"Blueprint '{blueprint_data['blueprint_name']}' has been created successfully.",
         )
+
     except Exception as error:
         session.rollback()
         return False, str(error)

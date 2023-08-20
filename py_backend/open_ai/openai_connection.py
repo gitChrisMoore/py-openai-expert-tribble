@@ -94,7 +94,7 @@ def send_openai_functions_two(messages, functions, function_name):
             frequency_penalty=0,
             presence_penalty=0,
         )
-        print("res res re", response)
+        # print("res res re", response)
         log.info(
             "%s: send_openai_functions_two - response - %s",
             FILE_ID,

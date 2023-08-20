@@ -3,6 +3,7 @@ from sqlalchemy import Table, Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
+
 DB_FILEPATH = "py_backend/storage/data_base.db"
 
 Base = declarative_base()
@@ -27,6 +28,7 @@ class Blueprint(Base):
         default=lambda: str(uuid.uuid4()),
     )
     blueprint_name = Column(String, nullable=False)
+    droid_type = Column(String, nullable=False)
     blueprint_description = Column(String, nullable=False)
     sub_topic_name = Column(String, nullable=False)
     pub_topic_name = Column(String, nullable=False)

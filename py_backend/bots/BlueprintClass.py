@@ -49,16 +49,23 @@ class FunctionSchema:
 class BlueprintClass:
     blueprint_id: str
     blueprint_name: str
+    droid_type: str
     blueprint_description: str
     initial_context: list
-    sub_topic_name: Optional[str] = "strategy-market_obsticle-general"
-    pub_topic_name: Optional[str] = "strategy-market_obsticle-typed"
+    sub_topic_name: Optional[str]
+    pub_topic_name: Optional[str]
     functions: Optional[List[FunctionSchema]] = field(default_factory=list)
     ignored_roles: Optional[List[str]] = field(default_factory=lambda: ["system"])
     source_type: Optional[str] = "functional"
     ignored_source_types: Optional[List[str]] = field(
         default_factory=lambda: ["functional"]
     )
+
+    def __post_init__(self):
+        if self.sub_topic_name is None:
+            self.sub_topic_name = "strategy-market_obsticle-general"
+        if self.pub_topic_name is None:
+            self.pub_topic_name = "strategy-market_obsticle-typed"
 
 
 # test_data_parameters = {
