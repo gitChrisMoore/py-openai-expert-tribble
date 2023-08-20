@@ -1,7 +1,5 @@
 import logging
 import threading
-from py_backend.bots.ceo_advisor_ai import run_ceo_advisor_ai
-from py_backend.bots.ceo_trend_ai import run_trend_ai
 
 
 logging.getLogger("AIThreadManager").setLevel(logging.WARNING)
